@@ -119,6 +119,20 @@
       $this->game->drawCardStep2(4);
       self::ajaxResponse();
     }
+
+    public function action1() {
+      self::setAjaxMode();
+      $card_id = self::getArg("id", AT_posint, true);
+      $this->game->actionButton(1, $card_id);
+      self::ajaxResponse();
+    }
+
+    public function action2() {
+      self::setAjaxMode();
+      $card_id = self::getArg("id", AT_posint, true);
+      $this->game->actionButton(2, $card_id);
+      self::ajaxResponse();
+    }
   }
   
 

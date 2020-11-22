@@ -64,14 +64,17 @@ function (dojo, declare) {
 
             dojo.query('#relocateButton').connect('onclick', this, dojo.hitch( this, 'onRelocateButton', 'relocate' ));
             dojo.query('#takeAFollowerButton').connect('onclick', this, dojo.hitch( this, 'onTakeFollowerButton', 'takeFollower' ));
-            dojo.query('#drawACardButton').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'drawCard' ));
-            dojo.query('#upgradeButton').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'upgrade' ));
-            dojo.query('#endYourTurnButton').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'endTurn' ));
+            dojo.query('#drawACardButton').connect('onclick', this, dojo.hitch( this, 'onStandardActionButtons', 'drawCard' ));
+            dojo.query('#upgradeButton').connect('onclick', this, dojo.hitch( this, 'onStandardActionButtons', 'upgrade' ));
+            dojo.query('#endYourTurnButton').connect('onclick', this, dojo.hitch( this, 'onStandardActionButtons', 'endTurn' ));
             
-            dojo.query('#level1Button').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'level1' ));
-            dojo.query('#level2Button').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'level2' ));
-            dojo.query('#level3Button').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'level3' ));
-            dojo.query('#level4Button').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'level4' ));
+            dojo.query('#level1Button').connect('onclick', this, dojo.hitch( this, 'onStandardActionButtons', 'level1' ));
+            dojo.query('#level2Button').connect('onclick', this, dojo.hitch( this, 'onStandardActionButtons', 'level2' ));
+            dojo.query('#level3Button').connect('onclick', this, dojo.hitch( this, 'onStandardActionButtons', 'level3' ));
+            dojo.query('#level4Button').connect('onclick', this, dojo.hitch( this, 'onStandardActionButtons', 'level4' ));
+
+            dojo.query('#action1').connect('onclick', this, dojo.hitch( this, 'onActionButtons', 'action1' ));
+            dojo.query('#action2').connect('onclick', this, dojo.hitch( this, 'onActionButtons', 'action2' ));
 
             document.getElementById("DrawCardLevelButtons").style.display = 'none';
             document.getElementById("PossibleActions").style.display = 'none';
@@ -294,7 +297,6 @@ function (dojo, declare) {
             else {
                 this.playerBoards[index].cards.unselectAll();
             }
-
         },
 
         ///////////////////////////////////////////////////
@@ -525,7 +527,7 @@ function (dojo, declare) {
             _ make a call to the game server
         
         */
-        onActionButton: function(arg) {
+        onStandardActionButtons: function(arg) {
             if(this.player_id == this.getActivePlayerId()) {
                 if(arg == 'drawCard') {
                     console.log( "drawCard" );
@@ -558,6 +560,33 @@ function (dojo, declare) {
                     }, function(is_error) {
                     });
                 }
+            }
+            else {
+                this.showMessage( "This is not you turn", "error" );
+            }
+        },
+
+        onActionButtons : function(arg) {
+            if(arg == 'action1') {
+                console.log( "action 1" );
+            }
+            else if(arg == 'action2') {
+                console.log( "action 2" );
+            }
+
+            index = this.getPlayerBoardIndex(this.player_id);
+            var card_id = this.playerBoards[index].cards.getSelectedItems();
+            card_id = card_id[0].id;
+
+            var action = arg;
+            if (this.checkAction(action, true)) {
+                // Can play a card                    
+                this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/" + action + ".html", {
+                    id : card_id,
+                    lock : true
+                }, this, function(result) {
+                }, function(is_error) {
+                });
             }
             else {
                 this.showMessage( "This is not you turn", "error" );

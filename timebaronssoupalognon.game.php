@@ -336,10 +336,12 @@ class TimeBaronsSoupalognon extends Table
             $this->cards->moveCard($card_id, 'discardpile', $player_id);
         }
 
+        $cardInfo = self::getCardInfo($currentCard['type'], $currentCard['type_arg']);
+
         // And notify
         self::notifyAllPlayers(
             'playCard', 
-            clienttranslate('${player_name} plays a ${card_style} ${card_displayed}'), 
+            clienttranslate('${player_name} plays a ${card_style} called ${card_displayed}'), 
             array (
                 'i18n' => array ( 'card_displayed' ),
                 'player_id' => $player_id,
@@ -347,8 +349,7 @@ class TimeBaronsSoupalognon extends Table
                 'value' => $currentCard ['type_arg'],
                 'card_id' => $card_id,
                 'player_name' => self::getActivePlayerName(),
-                'card_displayed' => '',
-                // 'card_displayed' => $this->card_label[$currentCard['type']][$currentCard['type_arg']],
+                'card_displayed' => $cardInfo['name'],
                 'life_point' => $currentCard ['life_point'],
                 'followers' => $currentCard ['followers'],
                 'card_style' => $currentCard ['card_style']
@@ -466,17 +467,17 @@ class TimeBaronsSoupalognon extends Table
     }
 
     /*
-    relocate($isRelocating,$relocateArray)
-    Params: 
-        $isRelocating : to be able to know from which step we are.
-        $relocateArray : array of all modifications during relocation.
-                How to use it : 
-                    array(number of modifications) {
-                        array(2) {
-                            [0] ==> card_id
-                            [1] ==> number of moved follower, if it is positive it means you add followers and if it is negative you remove followers
+        relocate($isRelocating,$relocateArray)
+        Params: 
+            $isRelocating : to be able to know from which step we are.
+            $relocateArray : array of all modifications during relocation.
+                    How to use it : 
+                        array(number of modifications) {
+                            array(2) {
+                                [0] ==> card_id
+                                [1] ==> number of moved follower, if it is positive it means you add followers and if it is negative you remove followers
+                            }
                         }
-                    }
     */
     function relocate($isRelocating,$relocateArray) {
         if($isRelocating) {
@@ -554,6 +555,38 @@ class TimeBaronsSoupalognon extends Table
     function endTurn() {
         // Next player
         $this->gamestate->nextState('endTurn');
+    }
+
+    function actionButton($buttonNumber, $card_id) {
+        $player_id = self::getActivePlayerId();
+
+        if($buttonNumber == 1) {
+
+        }
+        else if($buttonNumber == 2) {
+
+        }
+        else {
+            // self::dump( 'Error : ActionButton, button does not exist');
+            throw new BgaUserException ("Error : ActionButton, button does not exist");
+        }
+
+        $sql = "SELECT card_id id, card_type level, card_type_arg level_arg FROM card WHERE card_id = '".$card_id."'";
+        $cardInfo = self::getCollectionFromDb($sql);
+        $cardInfo = $cardInfo[$card_id];
+        $cardInfo = self::getCardInfo($cardInfo['level'], $cardInfo['level_arg']);
+        // self::dump( 'card info :', $cardInfo);
+
+        self::notifyAllPlayers(
+            'actionButton', 
+            clienttranslate('${player_name} used action ${button_number} on ${card_name}'), 
+            array (
+                'player_name' => self::getActivePlayerName(),
+                'player_id' => $player_id,
+                'button_number' => $buttonNumber,
+                'card_name' => $cardInfo['name']
+            )
+        );
     }
 
     
