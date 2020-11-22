@@ -1,0 +1,148 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * TimeBaronsSoupalognon implementation : © <Your name here> <Your email address here>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * timebaronssoupalognon.css
+ *
+ * TimeBaronsSoupalognon stylesheet
+ *
+ */
+
+/*
+    This is the CSS stylesheet of your game User Interface.
+    
+    Styles defined on this file will be applied to the HTML elements you define in your
+    HTML template (timebaronssoupalognon_timebaronssoupalognon.tpl), and to HTML elements you create dynamically
+    (in timebaronssoupalognon.js).
+    
+    Usually, you are using CSS to:
+    
+    1°) define the overall layout of your game
+        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+
+    2°) create your CSS-sprites:
+        All images of your games should be gathered into a small number of image files. Then, using
+        background-image and background-position CSS properties, you create HTML blocks that can 
+        display these images correctly (see example below).
+    
+    3°) ... anything else:
+        It is really easy to add and remove CSS classes dynamically from your Javascript with
+        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
+        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
+        very often, using CSS classes for the logic of your user interface allow you to do complex
+        thing easily.
+        
+        
+     Note: on the production platform, this file will be compressed and comments will be removed.
+           Consequently, don't hesitate to put as many comments as necessary.
+*/
+
+
+/* Note: you must not use any @import directive */
+
+.playertablecard {
+    display: inline-block;
+    position: relative;
+    margin-top: 5px;
+    width: 100%;
+    /* height: 320px; */
+    /*background-image: url('img/cards.jpg');*/
+}
+
+/*** Buttons ***/
+#ActionButtons
+{
+    position:relative;
+    margin-top: 50px;
+    left: 300px;
+	/* top: 10px; */
+    /* z-index:6; */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.plusMinusButtons
+{
+    position:absolute;
+    width: 22px;
+    height: 22px;
+    background: url('img/plus_minus.jpg');
+    background-repeat: no-repeat;
+    /* z-index:6; */
+}
+
+.addFollower { 
+    background-position: 0px 0px;   
+    /* top : 290px; */
+    /* left: 75px; */
+}
+
+.removeFollower { 
+    background-position: -26px 0px;
+    /* top : 290px; */
+    /* left: 120px; */
+}
+
+/*** cards on table ***/
+#availableFollower {
+    display: inline-block;
+    font-weight: bold;
+}
+
+.cardontable {
+    /* position: relative;
+    width: 220px;
+    height: 300px; */
+    background-image: url('img/cards.jpg'); 
+    z-index:1;
+}
+
+.cardtext {
+    position: absolute;
+    font-weight: bold;
+    text-align:left;
+    font-size: small;
+    /* top: 10px;
+    left: 12px; */
+    color: blue;
+    z-index:2;
+}
+
+/** Table layout **/
+
+#playertables {
+    position: relative;
+    width: 100%;
+    /* height: 1400px; */
+}
+
+.playertablename {
+    font-weight: bold;
+}
+
+.playertable {
+    position: relative;
+    text-align: center;
+    /* width: 1400px; */
+    /* height: 320px; */
+}
+
+.playertable_N {
+    left: 0%;
+    top: 0px;
+    /* margin-left: -90px;  */
+}
+.playertable_S {
+    left: 0%;
+    bottom: 0px;
+    /* margin-left: -90px; */
+}
