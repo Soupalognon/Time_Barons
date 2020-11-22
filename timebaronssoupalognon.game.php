@@ -42,7 +42,7 @@ class TimeBaronsSoupalognon extends Table
         ) );    
         
         $this->cards = self::getNew( "module.common.deck" );
-        $this->cards->init( "card" );    
+        $this->cards->init( "card" );
 	}
 	
     protected function getGameName( )
@@ -83,7 +83,7 @@ class TimeBaronsSoupalognon extends Table
         // Create cards
         $cards = array ();
         foreach($this->allCards as $card) {
-            $cards [] = array ('type' => $card['level'],'type_arg' => $card['level_arg'],'nbr' => $card['nbr'] );
+            $cards [] = array ('type' => $card['level'],'type_arg' => $card['level_arg'],'nbr' => $card['number_of_cards'] );
         }
         $this->cards->createCards( $cards, 'deck' );
 
@@ -91,7 +91,8 @@ class TimeBaronsSoupalognon extends Table
         foreach($this->allCards as $card) {
             $sql = "UPDATE card SET  ";
             $values = array();
-            $values[] = "action_point = '".$card['action_point']."', card_style = '".$card['card_style']."' WHERE (card_type = '".$card['level']."' AND card_type_arg = '".$card['level_arg']."')";
+            // $values[] = "action_cost = '".$card['action_cost']."', card_style = '".$card['card_style']."' WHERE (card_type = '".$card['level']."' AND card_type_arg = '".$card['level_arg']."')";
+            $values[] = "card_style = '".$card['card_style']."' WHERE (card_type = '".$card['level']."' AND card_type_arg = '".$card['level_arg']."')";
             $sql .= implode( $values, ',' );
             self::DbQuery( $sql );
         }
@@ -170,6 +171,9 @@ class TimeBaronsSoupalognon extends Table
         // $result['cardsontable'] = $this->cards->getCardsInLocation( 'cardsontable' );
         $sql = "SELECT card_id id, card_type type, card_type_arg type_arg, card_location_arg location_arg, life_point life_point, followers followers  FROM card WHERE (card_location = 'cardsontable')";
         $result['cardsontable'] = self::getCollectionFromDb( $sql );
+
+        $result['sitesPossibleActions'] = self::getAllSitesPossibleActions();
+        // self::getAllSitesPossibleActions();
 
         return $result;
     }
@@ -256,6 +260,47 @@ class TimeBaronsSoupalognon extends Table
         // self::dump( 'pickcard at the end = ', $pickCard);
 
         return $pickCard;
+    }
+
+    function getCardInfo($level, $level_arg) {
+        $returnValue = array();
+        foreach($this->allCards as $card) {
+            // self::dump( 'card = ', $card['name']);
+            if($card['level'] == $level && $card['level_arg'] == $level_arg) {
+                // self::dump( 'card = ', $card);
+                $returnValue = $card;
+            }
+        }
+        return $returnValue;
+    }
+
+    /*
+        Return an array of possible actions for all sites on the deck
+
+        Return : 
+            array(number of site cards) {
+                id => {
+                    id : id of the card
+                    possible_actions : number of possible action for this card id
+                }
+            }
+    */
+    function getAllSitesPossibleActions() {
+        $returnValue = array();
+
+        foreach($this->allCards as $card) {
+            if($card['card_style'] == 'site') {
+                $sql = "SELECT card_id id FROM card WHERE (card_type = '".$card['level']."' AND card_type_arg = '".$card['level_arg']."')";
+                $results = self::getCollectionFromDB($sql);
+
+                foreach($results as $result) {
+                    $returnValue[$result['id']] = array('id' => $result['id'], 'possible_actions' => $card['possible_actions']);
+                }
+                // self::dump( 'result = ', $results);
+            }
+        }
+        // self::dump( 'returnValue = ', $returnValue);
+        return $returnValue;
     }
 
 //////////////////////////////////////////////////////////////////////////////

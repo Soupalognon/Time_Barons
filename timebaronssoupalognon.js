@@ -1,5 +1,5 @@
 /**
- *------
+ * -----
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
  * TimeBaronsSoupalognon implementation : © <Your name here> <Your email address here>
  *
@@ -62,13 +62,6 @@ function (dojo, declare) {
             this.initPlayerHand();
             this.initPlayerBoards(gamedatas.players);
 
-            // var callback = dojo.hitch( this, 'onRelocateButton', 10 );
-            // dojo.query('#relocateButton').connect('onclick', this, callback);
-            // dojo.query('#drawACardButton').connect('onclick', this, 'onDrawACardButton');
-            // dojo.query('#takeAFollowerButton').connect('onclick', this, 'onTakeAFollowerButton');
-            // dojo.query('#upgradeButton').connect('onclick', this, 'onUpgradeButton');
-            // dojo.query('#endYourTurnButton').connect('onclick', this, 'onEndYourTurnButton');
-
             dojo.query('#relocateButton').connect('onclick', this, dojo.hitch( this, 'onRelocateButton', 'relocate' ));
             dojo.query('#takeAFollowerButton').connect('onclick', this, dojo.hitch( this, 'onTakeFollowerButton', 'takeFollower' ));
             dojo.query('#drawACardButton').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'drawCard' ));
@@ -81,19 +74,11 @@ function (dojo, declare) {
             dojo.query('#level4Button').connect('onclick', this, dojo.hitch( this, 'onActionButton', 'level4' ));
 
             document.getElementById("DrawCardLevelButtons").style.display = 'none';
+            document.getElementById("PossibleActions").style.display = 'none';
             document.getElementById("availableFollower").style.visibility = 'hidden';
 
             // console.log( 'playerID: '+  this.playerBoards);
             // console.log( 'playerID: '+  JSON.stringify(gamedatas.players));
-
-            // Cards played on table
-            // for (i in this.gamedatas.cardsontable) {
-            //     var card = this.gamedatas.cardsontable[i];
-            //     var level = card.type;
-            //     var value = card.type_arg;
-            //     var player_id = card.location_arg;
-            //     this.playCardOnTable(player_id, level, value, card.id);
-            // }
 
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -154,6 +139,8 @@ function (dojo, declare) {
                 this.playerBoards[index].cards.create( this, $('playertablecard_' + players[player].id), this.cardwidth, this.cardheight );
                 this.playerBoards[index].cards.setSelectionMode(1);  //Configure player board to be able to select only one card at a time
 
+                dojo.connect( this.playerBoards[index].cards, 'onChangeSelection', this, 'onClickPlayerBoard' );
+
                 this.playerBoards[index].cards.image_items_per_row = this.image_items_per_row;
             
                 // Create cards types:
@@ -194,6 +181,38 @@ function (dojo, declare) {
             }
 
             // console.log( 'playerboard keys: '+  JSON.stringify(this.playerBoards));
+        },
+
+         // This method is called when myStockControl selected items changed
+        onClickPlayerBoard : function(control_name, item_id) {
+            var player_id = control_name.match(/\d+/);  //Extract player id on the player board name
+            var index = this.getPlayerBoardIndex(player_id);   //find the position on this array where the playerBoards is.
+            var items = this.playerBoards[index].cards.getSelectedItems();
+
+            if(player_id == this.player_id && this.isCurrentPlayerActive()) { //If you are the owner of the card and you are the active player
+                if((item_id != undefined) && (items.length == 1)) {   //If the item_id is undefined, it means you unselect the card. If size of items is equal to 1 it means there is only one card selected
+                    // console.log('name : ' + player_id + ' item : ' + item_id );
+                    console.log('Current player clicked on one of his card');
+                    possibleAcions = this.gamedatas.sitesPossibleActions[item_id]['possible_actions'];
+
+                    if(possibleAcions > 0) {
+                        document.getElementById("PossibleActions").style.display = 'block';
+                        document.getElementById("action1").style.visibility = 'hidden';
+                        document.getElementById("action2").style.visibility = 'hidden';
+
+                        for(i=1; i<=possibleAcions; i++) {   //Display action buttons
+                            document.getElementById("action" + i).style.visibility = 'visible';
+                        }
+                    }
+                }
+                else {
+                    document.getElementById("PossibleActions").style.display = 'none';
+                }
+            }
+            else {
+                this.playerBoards[index].cards.unselectAll();
+            }
+
         },
 
 

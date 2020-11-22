@@ -70,6 +70,12 @@
     overflow-y: hidden;
 }
 
+#PossibleActions
+{
+    position:relative;
+    left: 300px;
+}
+
 .plusMinusButtons
 {
     position:absolute;

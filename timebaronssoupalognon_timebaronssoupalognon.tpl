@@ -45,6 +45,11 @@
         <a href="#" id="level3Button" class="bgabutton bgabutton_blue"><span>Level 3</span></a>
         <a href="#" id="level4Button" class="bgabutton bgabutton_blue"><span>Level 4</span></a>
     </div>
+
+    <div id="PossibleActions">
+        <a href="#" id="action1" class="bgabutton bgabutton_blue"><span>Action 1</span></a>
+        <a href="#" id="action2" class="bgabutton bgabutton_blue"><span>Action 2</span></a>
+    </div>
     
     <!-- BEGIN player -->
     <div class="playertable whiteblock playertable_{DIR}">

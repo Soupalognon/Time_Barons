@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `card` (
   `card_type_arg` int(11) NOT NULL,
   `card_location` varchar(16) NOT NULL,
   `card_location_arg` int(11) NOT NULL,
-  `action_point` int(11) NOT NULL,
+  `action_cost` int(11) NOT NULL,
   `life_point` int(11) DEFAULT 3,
   `followers` int(11) DEFAULT 0,
   -- `level` varchar(16) NOT NULL,
