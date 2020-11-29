@@ -121,10 +121,10 @@ class TimeBaronsSoupalognon extends Table
 
             // self::DbQuery("UPDATE player SET player_level = '4'");
 
-            // $cardsToPick = self::pickCardsLevel(2, 10);
-            // foreach($cardsToPick as $card) {
-            //     $this->cards->moveCard( (int)(array_keys($card)[0]), 'cardsontable', $player_id );
-            // }
+            $cardsToPick = self::pickCardsLevel(1, 10);
+            foreach($cardsToPick as $card) {
+                $this->cards->moveCard( (int)(array_keys($card)[0]), 'cardsontable', $player_id );
+            }
         }
 
         // Init global values with their initial values
@@ -558,10 +558,18 @@ class TimeBaronsSoupalognon extends Table
     }
 
     function actionButton($buttonNumber, $card_id) {
+        // self::checkAction("action" + $buttonNumber);
         $player_id = self::getActivePlayerId();
 
-        if($buttonNumber == 1) {
+        $sql = "SELECT card_id id, card_type level, card_type_arg level_arg FROM card WHERE card_id = '".$card_id."'";
+        $cardInfo = self::getCollectionFromDb($sql);
+        $cardInfo = $cardInfo[$card_id];
+        $cardInfo = self::getCardInfo($cardInfo['level'], $cardInfo['level_arg']);
 
+        if($buttonNumber == 1) {
+            if($cardInfo['name'] == "Catapult") {
+                // self::trace( "Catapult has been chosen" );
+            }
         }
         else if($buttonNumber == 2) {
 
@@ -570,12 +578,6 @@ class TimeBaronsSoupalognon extends Table
             // self::dump( 'Error : ActionButton, button does not exist');
             throw new BgaUserException ("Error : ActionButton, button does not exist");
         }
-
-        $sql = "SELECT card_id id, card_type level, card_type_arg level_arg FROM card WHERE card_id = '".$card_id."'";
-        $cardInfo = self::getCollectionFromDb($sql);
-        $cardInfo = $cardInfo[$card_id];
-        $cardInfo = self::getCardInfo($cardInfo['level'], $cardInfo['level_arg']);
-        // self::dump( 'card info :', $cardInfo);
 
         self::notifyAllPlayers(
             'actionButton', 
